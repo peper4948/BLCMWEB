@@ -1,0 +1,376 @@
+/* =========================
+   FUENTES
+========================= */
+@font-face{
+    font-family: 'NunitoBold';
+    src: url('fonts/Nunito-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face{
+    font-family: 'Nunito';
+    src: url('fonts/Nunito-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* =========================
+   FONDO + LAYOUT GENERAL
+========================= */
+html, body{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Fondo aurora suave (innovador pero limpio) */
+body{
+    background:
+        radial-gradient(circle at 20% 20%, rgba(183,192,255,0.65) 0%, transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(127,251,255,0.55) 0%, transparent 48%),
+        radial-gradient(circle at 40% 80%, rgba(202,166,255,0.55) 0%, transparent 45%),
+        #f7f9ff;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Nunito', Arial, sans-serif;
+}
+
+.principal{
+    flex: 1;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+.navbar-blcm{
+    background: linear-gradient(90deg, rgba(138, 20, 255, 1) 0%, rgba(128, 251, 255, 1) 67%);
+    font-family: 'NunitoBold', Arial, sans-serif;
+    padding: 1.4rem 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+
+.blcm-title{
+    font-family: 'NunitoBold', sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: white !important;
+    transition: transform .25s ease;
+}
+
+.blcm-title:hover{
+    transform: translateY(-3px);
+}
+
+.navbar-blcm .nav-link{
+    color: rgba(255,255,255,0.95) !important;
+    font-size: 1.08rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin: 0 12px;
+    transition: transform 0.2s ease;
+}
+
+.navbar-blcm .nav-link:hover{
+    transform: translateY(-3px);
+}
+
+.navbar-blcm .dropdown-menu{
+    border: 0;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.navbar-blcm .navbar-toggler{
+    border-color: rgba(255,255,255,0.6);
+}
+
+.navbar-blcm .navbar-toggler-icon{
+    filter: invert(1);
+}
+
+/* =========================
+   CARRUSEL (VERSIÓN ESTABLE)
+========================= */
+#carouselExample{
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.carousel-img{
+    height: 520px;
+    object-fit: cover;
+    object-position: center;
+}
+
+@media (max-width: 768px){
+    .carousel-img{ height: 260px; }
+}
+
+.img-izq{ object-position: 25% center; }
+.img-centro{ object-position: 50% center; }
+.img-der{ object-position: 80% center; }
+
+/* =========================
+   ICONOS
+========================= */
+.btn-ig img{
+    height: 22px;
+    width: 22px;
+    object-fit: contain;
+    vertical-align: middle;
+    transform: translateY(-1px);
+}
+
+/* =========================
+   SECCIÓN "SOBRE LA BANDA" (Nosotros / Visión / Misión)
+   -> fondo morado que se derrama hacia abajo (degradado)
+========================= */
+.seccion-info{
+    position: relative;
+    margin-top: -6px;              /* pegada al carrusel */
+    padding: 30px 0 140px;         /* extra abajo para que el degradado cubra hacia Secciones */
+
+    background: linear-gradient(
+        to bottom,
+        rgba(143,153,251,0.95) 0%,
+        rgba(143,153,251,0.85) 25%,
+        rgba(143,153,251,0.55) 55%,
+        rgba(143,153,251,0.25) 75%,
+        rgba(143,153,251,0.0) 100%
+        );
+}
+
+/* Card estilo glass (ya no morada sólida) */
+.seccion-info .card{
+    background: rgba(255,255,255,0.40);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.35);
+
+    border-radius: 22px;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.18);
+}
+
+/* Tipos */
+.seccion-info .card-body{
+    padding: 2rem;
+}
+
+/* Títulos y texto en negro */
+.seccion-info .seccion-titulo{
+    font-family: 'NunitoBold', Arial, sans-serif;
+    font-size: 35px;
+    letter-spacing: 0.2px;
+    color: #111;
+}
+
+.seccion-info .seccion-texto{
+    font-family: 'Nunito', Arial, sans-serif;
+    font-size: 20px;
+    line-height: 1.7;
+    color: rgba(0,0,0,0.78);
+}
+
+/* Tabs */
+.seccion-info .nav-tabs{
+    border-bottom: 0;
+    gap: 6px;
+}
+
+/* Botones tab */
+.seccion-info .nav-tabs .nav-link{
+    font-family: 'NunitoBold', Arial, sans-serif;
+    color: rgba(0,0,0,0.70);
+    border: none;
+    border-radius: 14px 14px 0 0;
+    padding: 12px 18px;
+    background: transparent;
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+/* Tab activo bien marcado */
+.seccion-info .nav-tabs .nav-link.active{
+    color: #000;
+    background: rgba(255,255,255,0.65);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.14);
+    transform: translateY(-2px);
+}
+
+.seccion-info .nav-tabs .nav-link:hover{
+    transform: translateY(-2px);
+}
+/* =========================
+   APARTADO SECCIONES (Cards con overlay + glass)
+========================= */
+.section-card{
+    border: none;
+    overflow: hidden;
+    position: relative;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.section-img{
+    height: 280px;
+    object-fit: cover;
+    transition: transform .5s ease;
+}
+
+/* overlay oscuro */
+.section-overlay{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.1));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 18px;
+    color: white;
+    opacity: 0;
+    transition: opacity .35s ease;
+}
+
+.section-overlay h5{
+    font-family: 'NunitoBold', Arial, sans-serif;
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.section-overlay p{
+    font-size: 14px;
+    margin: 0;
+}
+
+.section-card:hover .section-img{
+    transform: scale(1.08);
+}
+
+.section-card:hover .section-overlay{
+    opacity: 1;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.footer-blcm{
+    background: linear-gradient(90deg, rgba(138, 20, 255, 1) 0%, rgba(128, 251, 255, 1) 67%);
+    font-family: 'NunitoBold', Arial, sans-serif;
+    padding: 0.6rem 0;
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.20);
+    color: rgba(255,255,255,0.95);
+}
+
+.footer-brand{
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    color: white;
+    transition: transform .25s ease;
+}
+
+.footer-brand:hover{
+    transform: translateY(-3px);
+}
+
+.footer-slogan{
+    font-size: 1.02rem;
+    font-weight: 700;
+    opacity: 0.95;
+}
+
+.footer-social{
+    display: inline-flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+}
+
+.social-btn{
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.16);
+    border: 1px solid rgba(255,255,255,0.25);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.social-btn img{
+    filter: brightness(0) invert(1);
+}
+
+.social-btn:hover{
+    transform: translateY(-3px);
+    background: rgba(255,255,255,0.24);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.22);
+}
+
+.footer-copy{
+    font-size: 0.9rem;
+    font-weight: 700;
+    opacity: 0.92;
+}
+/* Evita que cambie la altura al cambiar de tab */
+.seccion-info .tab-content{
+    min-height: 220px;  /* ajusta si ocupas más/menos */
+}
+.seccion-info .tab-pane{
+    transition: opacity .2s ease;
+}
+
+/* =========================
+   TEXTO TÍTULOS GENERALES
+========================= */
+.texto {
+    font-family: 'NunitoBold', Arial, sans-serif;
+    font-size: 2rem;
+    color: #222;
+}
+
+/* =========================
+   RESPONSIVE GENERAL
+========================= */
+@media (max-width: 992px) {
+    .navbar-blcm .nav-link { margin: 2px 6px; }
+}
+
+@media (max-width: 768px) {
+    .blcm-title { font-size: 28px; }
+
+    .seccion-info .seccion-titulo { font-size: 26px; }
+    .seccion-info .seccion-texto  { font-size: 16px; }
+
+    .footer-brand   { font-size: 22px; }
+    .footer-slogan  { font-size: 0.88rem; }
+    .footer-copy    { font-size: 0.78rem; }
+
+    .texto { font-size: 1.6rem; }
+}
+
+@media (max-width: 576px) {
+    .blcm-title { font-size: 22px; }
+
+    .page-header h1 { font-size: 1.8rem; }
+    .page-header p  { font-size: 0.9rem; }
+
+    .seccion-info { padding: 20px 0 80px; }
+    .seccion-info .seccion-titulo { font-size: 22px; }
+    .seccion-info .seccion-texto  { font-size: 14px; }
+    .seccion-info .tab-content    { min-height: 180px; }
+
+    .section-img { height: 200px; }
+
+    .footer-slogan  { font-size: 0.80rem; }
+    .social-btn     { width: 36px; height: 36px; }
+}

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <title>Calendario — BLCM</title>
+    <meta name="author" content="José Pablo Ramírez Fernández" />
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ── Encabezado de página ── */
+        .page-header {
+            background: linear-gradient(90deg, rgba(138,20,255,1) 0%, rgba(128,251,255,1) 67%);
+            padding: 3rem 0 2.5rem;
+            text-align: center;
+            color: white;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.20);
+        }
+        .page-header h1 {
+            font-family: 'NunitoBold', Arial, sans-serif;
+            font-size: 2.6rem;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+        .page-header p {
+            font-family: 'Nunito', Arial, sans-serif;
+            font-size: 1.1rem;
+            margin: 0.4rem 0 0;
+            opacity: 0.92;
+        }
+
+        /* ── Leyenda ── */
+        .leyenda {
+            display: flex;
+            gap: 1.4rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1.6rem 0 0;
+        }
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'NunitoBold', Arial, sans-serif;
+            font-size: 0.95rem;
+            color: rgba(0,0,0,0.75);
+        }
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-presentacion { background: rgba(138,20,255,1); }
+        .dot-competencia  { background: #00bcd4; }
+
+        /* ── Tarjeta del calendario ── */
+        .cal-card {
+            background: rgba(255,255,255,0.45);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.40);
+            border-radius: 22px;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.15);
+            padding: 1.8rem;
+        }
+
+        /* ── Navegación del mes ── */
+        .cal-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.2rem;
+        }
+        .cal-nav button {
+            background: rgba(138,20,255,0.12);
+            border: none;
+            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            font-size: 1.1rem;
+            color: rgba(138,20,255,1);
+            cursor: pointer;
+            transition: background .2s;
+        }
+        .cal-nav button:hover { background: rgba(138,20,255,0.22); }
+        .cal-mes {
+            font-family: 'NunitoBold', Arial, sans-serif;
+            font-size: 1.4rem;
+            color: #222;
+            text-transform: capitalize;
+        }
+
+        /* ── Grid del calendario ── */
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+        .cal-dia-nombre {
+            font-family: 'NunitoBold', Arial, sans-serif;
+            font-size: 0.78rem;
+            text-align: center;
+            color: rgba(0,0,0,0.50);
+            padding-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .cal-dia {
+            min-height: 64px;
+            border-radius: 12px;
+            padding: 6px 5px 4px;
+            background: rgba(255,255,255,0.35);
+            border: 1px solid rgba(255,255,255,0.30);
+            cursor: default;
+            transition: background .2s, transform .15s;
+            position: relative;
+        }
+        .cal-dia.vacio { background: transparent; border-color: transparent; }
+        .cal-dia.hoy {
+            background: rgba(138,20,255,0.14);
+            border-color: rgba(138,20,255,0.35);
+        }
+        .cal-dia.tiene-evento { cursor: pointer; }
+        .cal-dia.tiene-evento:hover {
+            background: rgba(255,255,255,0.65);
+            transform: translateY(-2px);
+        }
+        .cal-dia .num {
+            font-family: 'NunitoBold', Arial, sans-serif;
+            font-size: 0.95rem;
+            color: #333;
+            line-height: 1;
+        }
+        .cal-dia.hoy .num { color: rgba(138,20,255,1); }
+        .cal-dia .eventos-dia {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            margin-top: 4px;
+        }
+        .badge-evento {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* ── Lista de próximos eventos ── */
+        .evento-item {
+            background: rgba(255,255,255,0.45);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .evento-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.14);
+        }
+        .evento-fecha-bloque {
+            min-width: 58px;
+            text-align: center;
+            padding: 8px 6px;
+            border-radius: 12px;
+            color: white;
+            flex-shrink: 0;
+        }
+        .evento-fecha-bloque.presentacion {
+            background: linear-gradient(135deg, rgba(138,20,255,0.9), rgba(100,0,200,0.9));
+        }
+        .evento-fecha-bloque.competencia {
+            background: linear-gradient(135deg, #00bcd4, #0097a7);
+        }
+        .evento-fecha-bloque .dia-num {
+            font-family: 'NunitoBold', Arial, sans-serif;
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+        .evento-fecha-bloque .mes-txt {
+            font-family: 'Nunito', Arial, sans-serif;
+            font-size: 0.75rem;
+            opacity: 0.92;
+            text-transform: uppercase;
+        }
+        .evento-info h6 {
+            font-family: 'NunitoBold', Arial, sans-serif;
+            font-size: 1rem;
+            color: #222;
+            margin: 0 0 4px;
+        }
+        .evento-info p {
+            font-family: 'Nunito', Arial, sans-serif;
+            font-size: 0.88rem;
+            color: rgba(0,0,0,0.60);
+            margin: 0;
+        }
+        .evento-tipo-badge {
+            font-family: 'NunitoBold', Arial, sans-serif;
+            font-size: 0.72rem;
+            padding: 2px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        .badge-presentacion { background: rgba(138,20,255,0.12); color: rgba(138,20,255,1); }
+        .badge-competencia  { background: rgba(0,188,212,0.12);  color: #0097a7; }
+
+        .seccion-titulo-cal {
+            font-family: 'NunitoBold', Arial, sans-serif;
+            font-size: 1.6rem;
+            color: #222;
+        }
+
+        @media (max-width: 576px) {
+            .cal-dia { min-height: 48px; padding: 4px 3px 3px; }
+            .cal-dia .num { font-size: 0.80rem; }
+            .cal-mes { font-size: 1.1rem; }
+        }
+
+        /* ── Slider de eventos ── */
+        .slider-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .slider-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 0.9rem;
+        }
+        .slider-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.9rem;
+        }
+        .slider-btn {
+            background: rgba(138,20,255,0.12);
+            border: none;
+            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            font-size: 1.1rem;
+            color: rgba(138,20,255,1);
+            cursor: pointer;
+            transition: background .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slider-btn:hover  { background: rgba(138,20,255,0.22); }
+        .slider-btn:disabled { opacity: 0.35; cursor: default; }
+        .slider-dots {
+            display: flex;
+            gap: 6px;
+        }
+        .slider-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(138,20,255,0.20);
+            border: none;
+            cursor: pointer;
+            transition: background .2s, transform .2s;
+            padding: 0;
+        }
+        .slider-dot.activo {
+            background: rgba(138,20,255,1);
+            transform: scale(1.25);
+        }
+        .slider-contador {
+            font-family: 'NunitoBold', Arial, sans-serif;
+            font-size: 0.82rem;
+            color: rgba(0,0,0,0.45);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-blcm">
+            <div class="container-fluid">
+                <a class="navbar-brand blcm-title" href="index.html">BLCM</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="calendario.html">Calendario BLCM</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="galeria.html">Galería</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contacto.html">Contacto</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="audiciones.html">Audiciones</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ENCABEZADO DE PÁGINA -->
+    <div class="page-header">
+        <h1>Calendario BLCM</h1>
+        <p>Calendario de la Banda Lírica Cantonal de Moravia</p>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="container my-5 principal">
+
+        <!-- Leyenda -->
+        <div class="leyenda mb-4">
+            <div class="leyenda-item">
+                <span class="dot dot-presentacion"></span> Presentación
+            </div>
+            <div class="leyenda-item">
+                <span class="dot dot-competencia"></span> Competencia
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Calendario -->
+            <div class="col-lg-7">
+                <div class="cal-card">
+                    <div class="cal-nav">
+                        <button id="btnPrev" aria-label="Mes anterior">&#8249;</button>
+                        <span class="cal-mes" id="calMes"></span>
+                        <button id="btnNext" aria-label="Mes siguiente">&#8250;</button>
+                    </div>
+                    <div class="cal-grid" id="calGrid"></div>
+                </div>
+            </div>
+
+            <!-- Eventos -->
+            <div class="col-lg-5">
+                <h5 class="seccion-titulo-cal mb-3">Próximos eventos</h5>
+                <div class="slider-lista" id="sliderLista"></div>
+                <div class="slider-nav" id="sliderNav" style="display:none;">
+                    <button class="slider-btn" id="sliderPrev" aria-label="Anterior">&#8249;</button>
+                    <span class="slider-contador" id="sliderContador"></span>
+                    <button class="slider-btn" id="sliderNext" aria-label="Siguiente">&#8250;</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer-blcm mt-5">
+        <div class="container text-center py-4">
+            <div class="footer-brand">BLCM</div>
+            <div class="footer-slogan">
+                ¡Para muchos es una banda... Para nosotros es una familia!
+            </div>
+            <div class="footer-social mt-3">
+                <a class="social-btn ig" href="https://www.instagram.com/blcm__lirica">
+                    <img src="logo/instagram.svg" height="22">
+                </a>
+                <a class="social-btn fb" href="https://www.facebook.com/profile.php?id=100092644479915&locale=es_LA">
+                    <img src="logo/facebook.svg" height="22">
+                </a>
+                <a class="social-btn tk" href="https://www.tiktok.com/@blcm__lirica?lang=es-419">
+                    <img src="logo/tiktok.svg" height="22">
+                </a>
+            </div>
+            <hr class="footer-divider my-4">
+            <div class="footer-copy">
+                © 2026 Banda Lírica Cantonal de Moravia — Todos los derechos reservados<br>
+                Desarrollado por José Pablo Ramírez Fernández
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /* ============================================================
+           DATOS DE EVENTOS
+           tipo: 'presentacion' | 'competencia'
+           Para rangos: usar fechaFin (opcional).
+           Ejemplo: { fecha: '2026-09-09', fechaFin: '2026-09-14', ... }
+        ============================================================ */
+        const eventos = [
+            {
+                fecha: '2026-07-04',
+                titulo: 'WAMSB 2026 Banda',
+                lugar: 'Puriscal, San José',
+                tipo: 'competencia'
+            },
+            {
+                fecha: '2026-07-25',
+                titulo: 'WAMSB 2026 Competencia indoor',
+                lugar: 'La Fortuna, San Carlos',
+                tipo: 'competencia'
+            },
+            {
+                fecha: '2026-09-09',
+                fechaFin: '2026-09-14',
+                titulo: 'Panamá 2026',
+                lugar: 'Panamá',
+                tipo: 'competencia'
+            },
+            {
+                fecha: '2026-04-11',
+                titulo: 'Presentación en Feria de Guadalupe',
+                lugar: 'Guadalupe',
+                tipo: 'presentacion'
+            },
+            {
+                fecha: '2026-04-19',
+                titulo: 'Presentación Parque de Moravia',
+                lugar: 'Moravia',
+                tipo: 'presentacion'
+            },
+            {
+                fecha: '2026-04-25',
+                titulo: 'Presentación en Feria de Guadalupe',
+                lugar: 'Guadalupe',
+                tipo: 'presentacion'
+            },
+            
+        ];
+
+        /* ============================================================
+           LÓGICA DEL CALENDARIO
+        ============================================================ */
+        const DIAS  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+        const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                       'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+        let viewDate = new Date();
+
+        function eventosDelDia(year, month, day) {
+            const key = new Date(year, month, day);
+            return eventos.filter(e => {
+                const inicio = new Date(e.fecha + 'T00:00:00');
+                const fin    = e.fechaFin ? new Date(e.fechaFin + 'T00:00:00') : inicio;
+                return key >= inicio && key <= fin;
+            });
+        }
+
+        function renderCalendario() {
+            const year  = viewDate.getFullYear();
+            const month = viewDate.getMonth();
+            const hoy   = new Date();
+
+            document.getElementById('calMes').textContent = `${MESES[month]} ${year}`;
+
+            const grid = document.getElementById('calGrid');
+            grid.innerHTML = '';
+
+            // Cabecera de días
+            DIAS.forEach(d => {
+                const el = document.createElement('div');
+                el.className = 'cal-dia-nombre';
+                el.textContent = d;
+                grid.appendChild(el);
+            });
+
+            const primerDia = new Date(year, month, 1).getDay();
+            const totalDias = new Date(year, month + 1, 0).getDate();
+
+            // Celdas vacías iniciales
+            for (let i = 0; i < primerDia; i++) {
+                const el = document.createElement('div');
+                el.className = 'cal-dia vacio';
+                grid.appendChild(el);
+            }
+
+            // Días del mes
+            for (let d = 1; d <= totalDias; d++) {
+                const evs   = eventosDelDia(year, month, d);
+                const esHoy = (d === hoy.getDate() && month === hoy.getMonth() && year === hoy.getFullYear());
+
+                const el = document.createElement('div');
+                el.className = 'cal-dia' + (esHoy ? ' hoy' : '') + (evs.length ? ' tiene-evento' : '');
+
+                const numEl = document.createElement('div');
+                numEl.className = 'num';
+                numEl.textContent = d;
+                el.appendChild(numEl);
+
+                if (evs.length) {
+                    const dotsEl = document.createElement('div');
+                    dotsEl.className = 'eventos-dia';
+                    evs.forEach(ev => {
+                        const dot = document.createElement('span');
+                        dot.className = `badge-evento ${ev.tipo === 'presentacion' ? 'dot-presentacion' : 'dot-competencia'}`;
+                        dotsEl.appendChild(dot);
+                    });
+                    el.appendChild(dotsEl);
+
+                    // Tooltip con Bootstrap
+                    el.setAttribute('data-bs-toggle', 'tooltip');
+                    el.setAttribute('data-bs-placement', 'top');
+                    el.setAttribute('title', evs.map(e => e.titulo).join(' / '));
+                }
+
+                grid.appendChild(el);
+            }
+
+            // Activar tooltips
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                new bootstrap.Tooltip(el, { trigger: 'hover' });
+            });
+        }
+
+        /* ── Slider ── */
+        let sliderIdx     = 0;
+        let proximosCache = [];
+        const VISIBLE     = 3;
+
+        function buildFechaDisplay(ev) {
+            const inicio = new Date(ev.fecha + 'T00:00:00');
+            if (ev.fechaFin) {
+                const fin = new Date(ev.fechaFin + 'T00:00:00');
+                return `<div class="dia-num" style="font-size:1.1rem;">${inicio.getDate()}—${fin.getDate()}</div>
+                        <div class="mes-txt">${MESES[fin.getMonth()].substring(0,3).toUpperCase()}</div>`;
+            }
+            return `<div class="dia-num">${inicio.getDate()}</div>
+                    <div class="mes-txt">${MESES[inicio.getMonth()].substring(0,3).toUpperCase()}</div>`;
+        }
+
+        function renderSlider() {
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+
+            proximosCache = eventos
+                .filter(e => {
+                    const fin = e.fechaFin
+                        ? new Date(e.fechaFin + 'T00:00:00')
+                        : new Date(e.fecha + 'T00:00:00');
+                    return fin >= hoy;
+                })
+                .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+            sliderIdx = 0;
+            actualizarSlider();
+        }
+
+        function actualizarSlider() {
+            const lista = document.getElementById('sliderLista');
+            const nav   = document.getElementById('sliderNav');
+            const total = proximosCache.length;
+            const totalPaginas = Math.ceil(total / VISIBLE);
+
+            lista.innerHTML = '';
+
+            if (!total) {
+                lista.innerHTML = '<p class="text-muted" style="font-family:\'Nunito\',sans-serif;">No hay eventos próximos.</p>';
+                nav.style.display = 'none';
+                return;
+            }
+
+            // Mostrar solo los 3 de la página actual
+            const desde = sliderIdx * VISIBLE;
+            const hasta = Math.min(desde + VISIBLE, total);
+            proximosCache.slice(desde, hasta).forEach(ev => {
+                const label = ev.tipo === 'presentacion' ? 'Presentación' : 'Competencia';
+                const item  = document.createElement('div');
+                item.className = 'evento-item';
+                item.innerHTML = `
+                    <div class="evento-fecha-bloque ${ev.tipo}">${buildFechaDisplay(ev)}</div>
+                    <div class="evento-info">
+                        <span class="evento-tipo-badge badge-${ev.tipo}">${label}</span>
+                        <h6>${ev.titulo}</h6>
+                        <p><i class="fa-solid fa-location-dot me-1"></i>${ev.lugar}</p>
+                    </div>`;
+                lista.appendChild(item);
+            });
+
+            nav.style.display = total > VISIBLE ? 'flex' : 'none';
+            document.getElementById('sliderContador').textContent = `${sliderIdx + 1} / ${totalPaginas}`;
+            document.getElementById('sliderPrev').disabled = sliderIdx === 0;
+            document.getElementById('sliderNext').disabled = sliderIdx === totalPaginas - 1;
+        }
+
+        document.getElementById('sliderPrev').addEventListener('click', () => { sliderIdx--; actualizarSlider(); });
+        document.getElementById('sliderNext').addEventListener('click', () => { sliderIdx++; actualizarSlider(); });
+
+        document.getElementById('btnPrev').addEventListener('click', () => {
+            viewDate.setMonth(viewDate.getMonth() - 1);
+            renderCalendario();
+        });
+
+        document.getElementById('btnNext').addEventListener('click', () => {
+            viewDate.setMonth(viewDate.getMonth() + 1);
+            renderCalendario();
+        });
+
+        renderCalendario();
+        renderSlider();
+    </script>
+
+</body>
+</html>
