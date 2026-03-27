@@ -402,8 +402,9 @@
             .then(() => {
                 // 2. Auto-reply al usuario
                 return emailjs.send('service_3s7nkv8', 'template_1b3lqc7', {
-                    nombre: datos.nombre,
-                    correo: datos.correo,
+                    nombre:  datos.nombre,
+                    correo:  datos.correo,
+                    seccion: '',
                 });
             })
             .then(() => {
